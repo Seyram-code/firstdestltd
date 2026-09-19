@@ -7,9 +7,9 @@ import { company } from '@/src/data/company';
 
 const workingHours = 'Monday - Friday, 9:00 AM - 5:00 PM';
 const defaultSocial = {
-  linkedin: 'https://www.linkedin.com',
-  facebook: 'https://www.facebook.com',
-  instagram: 'https://www.instagram.com',
+  linkedin: 'https://linkedin.com',
+  facebook: 'https://www.facebook.com/share/1FAbPA6J6F/',
+  instagram: 'https://instagram.com',
   x: 'https://x.com',
 };
 
