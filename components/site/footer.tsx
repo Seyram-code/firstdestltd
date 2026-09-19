@@ -10,7 +10,7 @@ const defaultSocial = {
   linkedin: 'https://linkedin.com',
   facebook: 'https://www.facebook.com/share/1FAbPA6J6F/',
   instagram: 'https://instagram.com',
-  x: 'https://x.com',
+  x: 'https://x.com/FirstDestCoLtd',
 };
 
 export function Footer() {

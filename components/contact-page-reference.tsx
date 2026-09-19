@@ -57,7 +57,7 @@ export function ContactPageReference() {
   return (
     <main className="bg-[#f5f8fc] text-brand-900">
       <section className="relative isolate min-h-[285px] overflow-hidden bg-[#061d3d] text-white md:min-h-[340px]">
-        <Image src="/about-building.jpg" alt="First Dest Company Limited building" fill priority sizes="100vw" className="-z-20 object-cover object-center" />
+        <Image src="/about-reception.png" alt="First Dest office reception" fill priority sizes="100vw" className="-z-20 object-cover object-center" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#061d3d] via-[#061d3d]/85 to-[#061d3d]/20" />
         <div className="mx-auto flex min-h-[285px] max-w-7xl items-center px-6 py-12 md:min-h-[340px] md:px-10">
           <div className="max-w-2xl">
@@ -107,7 +107,7 @@ export function ContactPageReference() {
               <a href="https://maps.google.com/?q=Adenta+Taxi+Rank+Near+ECG+Substation+Accra+Ghana" target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded bg-brand-900 px-4 py-2 text-xs font-bold text-white hover:bg-brand-700"><Navigation className="h-4 w-4" />Get Directions</a>
             </div>
             <div className="grid gap-5 sm:grid-cols-[1.2fr_0.8fr]">
-              <div className="relative min-h-[190px] overflow-hidden rounded-md"><Image src="/about-building.jpg" alt="First Dest office area" fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" /></div>
+              <div className="relative min-h-[190px] overflow-hidden rounded-md"><Image src="/about-reception.png" alt="First Dest office reception" fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" /></div>
               <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm"><p className="flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.18em] text-accent-500"><span className="h-0.5 w-10 bg-amber-400" />Our Office</p><p className="mt-3 text-sm leading-5 text-slate-700">Adenta Taxi Rank,<br />Near ECG Substation<br />Accra, Ghana.</p><div className="mt-4 space-y-2 text-xs text-slate-700"><a className="flex items-center gap-2" href={`tel:${company.phoneHref}`}><Phone className="h-4 w-4 text-brand-900" />{company.phone}</a><a className="flex items-center gap-2" href={`mailto:${company.email}`}><Mail className="h-4 w-4 text-brand-900" />{company.email}</a><span className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-brand-900" />{workingHours}</span></div></div>
             </div>
           </section>

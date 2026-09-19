@@ -23,6 +23,11 @@ Copy `.env.example` to `.env.local` for local production testing, or configure t
 ```env
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=info@yourdomain.com
+SMTP_PASSWORD=your-hostinger-mailbox-password
+SMTP_FROM=info@yourdomain.com
 CONTACT_EMAIL_TO=you@yourdomain.com
 ```
 
@@ -30,7 +35,7 @@ This value is used for canonical metadata, `sitemap.xml`, and `robots.txt`. Do n
 
 `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is optional. The current contact page uses an embedded Google Maps URL, so no API key is required unless the map integration changes to the Google Maps JavaScript or Embed API.
 
-`CONTACT_EMAIL_TO` is optional and defaults to `info@firstdestltd.com`. The current contact endpoint logs the validated submission and its destination; connect an email provider before relying on it for outbound email delivery.
+The contact form sends through Hostinger SMTP. Create the mailbox in hPanel first, then add its full email address and mailbox password as `SMTP_USER` and `SMTP_PASSWORD` in Hostinger's Node.js environment variables. Hostinger's standard SMTP endpoint is `smtp.hostinger.com` on SSL port `465`; port `587` with STARTTLS is the alternative if required. Set `SMTP_FROM` to the same verified mailbox. `CONTACT_EMAIL_TO` is the inbox that receives the submissions.
 
 ## Hosting notes
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -24,6 +25,25 @@ const getClientIp = (request: NextRequest) => {
   }
 
   return request.headers.get('x-real-ip') ?? 'unknown-client';
+};
+
+const getMailTransport = () => {
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPassword = process.env.SMTP_PASSWORD;
+
+  if (!smtpUser || !smtpPassword) return null;
+
+  const smtpPort = Number(process.env.SMTP_PORT ?? '465');
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST ?? 'smtp.hostinger.com',
+    port: smtpPort,
+    secure: smtpPort === 465,
+    auth: {
+      user: smtpUser,
+      pass: smtpPassword,
+    },
+  });
 };
 
 export async function POST(request: NextRequest) {
@@ -91,20 +111,46 @@ export async function POST(request: NextRequest) {
   }
 
   const destinationEmail = process.env.CONTACT_EMAIL_TO ?? 'info@firstdestltd.com';
+  const fromEmail = process.env.SMTP_FROM ?? process.env.SMTP_USER;
+  const transporter = getMailTransport();
 
-  console.info('Contact form submission received', {
-    ip,
-    fullName,
-    email,
-    phone,
-    company,
-    subject,
-    message,
-    destinationEmail,
-  });
+  if (!transporter || !fromEmail) {
+    console.error('Contact email service is not configured.');
+    return NextResponse.json(
+      { error: 'The contact service is temporarily unavailable. Please email us directly.' },
+      { status: 503 },
+    );
+  }
+
+  try {
+    await transporter.sendMail({
+      from: `First Dest Website <${fromEmail}>`,
+      to: destinationEmail,
+      replyTo: email,
+      subject: `Website contact: ${subject}`,
+      text: [
+        'New website contact submission',
+        '',
+        `Name: ${fullName}`,
+        `Email: ${email}`,
+        `Phone: ${phone}`,
+        `Company: ${company}`,
+        `Subject: ${subject}`,
+        '',
+        'Message:',
+        message,
+      ].join('\n'),
+    });
+  } catch (error) {
+    console.error('Contact email delivery failed.', error);
+    return NextResponse.json(
+      { error: 'Unable to send your message right now. Please try again later or email us directly.' },
+      { status: 502 },
+    );
+  }
 
   return NextResponse.json({
     success: true,
-    message: 'Your message has been received and is ready for processing.',
+    message: 'Thank you. Your message has been sent successfully.',
   });
 }
