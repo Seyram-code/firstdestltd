@@ -5,7 +5,6 @@ import { useState, type ReactNode } from 'react';
 import { Header } from './header';
 import { MobileMenu } from './mobile-menu';
 import { Footer } from './footer';
-import { AIAssistant } from './ai-assistant';
 
 type SiteShellProps = {
   children: ReactNode;
@@ -25,7 +24,6 @@ export function SiteShell({ children }: SiteShellProps) {
       <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       {children}
       {pathname !== '/admin' && <Footer />}
-      {pathname !== '/admin' && <AIAssistant />}
     </>
   );
 }

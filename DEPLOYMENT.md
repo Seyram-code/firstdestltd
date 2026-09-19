@@ -30,9 +30,6 @@ SMTP_USER=info@yourdomain.com
 SMTP_PASSWORD=your-hostinger-mailbox-password
 SMTP_FROM=info@yourdomain.com
 CONTACT_EMAIL_TO=you@yourdomain.com
-OPENAI_API_KEY=your-ai-provider-key
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
 This value is used for canonical metadata, `sitemap.xml`, and `robots.txt`. Do not leave it set to `localhost` in production.
@@ -42,8 +39,6 @@ This value is used for canonical metadata, `sitemap.xml`, and `robots.txt`. Do n
 URL submission uses IndexNow. Generate a key, set it as `INDEXNOW_KEY`, and add a plain-text file named `<key>.txt` to `public/` containing the key itself. The file must be available at `https://yourdomain.com/<key>.txt`.
 
 The contact form sends through Hostinger SMTP. Create the mailbox in hPanel first, then add its full email address and mailbox password as `SMTP_USER` and `SMTP_PASSWORD` in Hostinger's Node.js environment variables. Hostinger's standard SMTP endpoint is `smtp.hostinger.com` on SSL port `465`; port `587` with STARTTLS is the alternative if required. Set `SMTP_FROM` to the same verified mailbox. `CONTACT_EMAIL_TO` is the inbox that receives the submissions.
-
-The website assistant uses an OpenAI-compatible chat completion endpoint. Add `OPENAI_API_KEY` in the hosting environment; never use a `NEXT_PUBLIC_` variable for it. Without a key, the assistant remains available as a contact handoff that shows the company email and phone number.
 
 ## Hosting notes
 
