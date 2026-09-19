@@ -72,7 +72,7 @@ export function AboutPageClient() {
           </div>
 
           <div className="relative min-h-[300px] overflow-hidden rounded-md shadow-soft lg:min-h-0">
-            <Image src="/about-building.jpg" alt="First Dest reception" fill sizes="(max-width: 1024px) 100vw, 42vw" className="object-cover" />
+            <Image src="/about-reception.png" alt="First Dest reception" fill sizes="(max-width: 1024px) 100vw, 42vw" className="object-cover" />
           </div>
 
           <div className="relative overflow-hidden rounded-md bg-[#07366a] p-6 text-white shadow-soft">
