@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { FileImage, Globe2, ImagePlus, LayoutDashboard, Mail, Save, Settings2, Share2, Sparkles, Trash2 } from 'lucide-react';
+import { FileImage, Globe2, ImagePlus, LayoutDashboard, Link2, Mail, Save, Settings2, Share2, Sparkles, Trash2 } from 'lucide-react';
 import { company } from '@/src/data/company';
 
 type AdminSettings = {
@@ -12,6 +12,7 @@ type AdminSettings = {
 
 type Post = { id: string; title: string; category: 'Blog' | 'News'; status: 'Draft' | 'Published'; date: string; excerpt: string; featuredImage?: string };
 type AdminProject = { id: string; title: string; category: string; status: 'Completed' | 'Ongoing'; location: string; description: string; image: string };
+type UrlSubmission = { url: string; submittedAt: string };
 
 const defaultSettings: AdminSettings = {
   contact: { address: company.address, phone: company.phone, email: company.email, workingHours: 'Monday - Friday, 9:00 AM - 5:00 PM' },
@@ -37,15 +38,18 @@ export function AdminDashboard() {
   const [saved, setSaved] = useState(false);
   const [postForm, setPostForm] = useState({ title: '', category: 'Blog' as Post['category'], excerpt: '', featuredImage: '' });
   const [projectForm, setProjectForm] = useState<Omit<AdminProject, 'id'>>({ title: '', category: 'Construction', status: 'Ongoing', location: '', description: '', image: '' });
+  const [urlSubmissions, setUrlSubmissions] = useState<UrlSubmission[]>([]);
 
   useEffect(() => {
     const storedSettings = window.localStorage.getItem('firstdest-admin-settings');
     const storedPosts = window.localStorage.getItem('firstdest-admin-posts');
     const storedProjects = window.localStorage.getItem('firstdest-admin-projects');
+    const storedUrlSubmissions = window.localStorage.getItem('firstdest-url-submissions');
     setAccessState(window.localStorage.getItem('firstdest-admin-access-code') ? 'locked' : 'setup');
     if (storedSettings) setSettings(JSON.parse(storedSettings) as AdminSettings);
     if (storedPosts) setPosts(JSON.parse(storedPosts) as Post[]);
     if (storedProjects) setProjects(JSON.parse(storedProjects) as AdminProject[]);
+    if (storedUrlSubmissions) setUrlSubmissions(JSON.parse(storedUrlSubmissions) as UrlSubmission[]);
   }, []);
 
   const saveAccessCode = (event: FormEvent<HTMLFormElement>) => {
@@ -119,6 +123,15 @@ export function AdminDashboard() {
     window.localStorage.setItem('firstdest-admin-projects', JSON.stringify(nextProjects));
   };
 
+  const submitUrl = async (url: string) => {
+    const response = await fetch('/api/submit-url', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+    const result = (await response.json()) as { error?: string; success?: boolean; submittedAt?: string; url?: string };
+    if (!response.ok || !result.success || !result.submittedAt || !result.url) throw new Error(result.error ?? 'Unable to submit this URL.');
+    const nextSubmissions = [{ url: result.url, submittedAt: result.submittedAt }, ...urlSubmissions].slice(0, 20);
+    setUrlSubmissions(nextSubmissions);
+    window.localStorage.setItem('firstdest-url-submissions', JSON.stringify(nextSubmissions));
+  };
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'contact', label: 'Contact Details', icon: Mail },
@@ -126,9 +139,10 @@ export function AdminDashboard() {
     { id: 'projects', label: 'Projects', icon: Globe2 },
     { id: 'social', label: 'Social Media', icon: Share2 },
     { id: 'posts', label: 'Posts & Blog', icon: Sparkles },
+    { id: 'urls', label: 'Submit URLs', icon: Link2 },
   ];
 
-  if (accessState === 'loading') return <div className="flex min-h-screen items-center justify-center bg-[#f3f6fa] text-sm text-slate-600">Checking admin access...</div>;
+  if (accessState === 'loading') return <main className="flex min-h-screen items-center justify-center bg-[#f3f6fa] text-center text-sm text-slate-600"><h1>Checking admin access...</h1></main>;
 
   if (accessState !== 'unlocked') return <AccessGate mode={accessState} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError} onSubmit={accessState === 'setup' ? saveAccessCode : unlock} />;
 
@@ -152,6 +166,7 @@ export function AdminDashboard() {
           {activeTab === 'images' && <ImageSettings settings={settings} updateImage={updateImage} handleImageFile={handleImageFile} />}
           {activeTab === 'projects' && <ProjectsSettings projects={projects} projectForm={projectForm} setProjectForm={setProjectForm} saveProject={saveProject} deleteProject={deleteProject} />}
           {activeTab === 'posts' && <PostsSettings posts={posts} postForm={postForm} setPostForm={setPostForm} createPost={createPost} deletePost={deletePost} />}
+          {activeTab === 'urls' && <UrlSubmissionSettings submissions={urlSubmissions} submitUrl={submitUrl} />}
         </section>
       </div>
     </main>
@@ -170,6 +185,31 @@ function Overview({ posts, setTab }: { posts: Post[]; setTab: (tab: string) => v
 function OverviewCard({ label, value }: { label: string; value: number }) { return <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{label}</p><p className="mt-3 text-4xl font-black text-brand-900">{value}</p></div>; }
 function SettingsCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) { return <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"><h2 className="text-2xl font-extrabold text-brand-900">{title}</h2><p className="mt-2 text-sm text-slate-600">{description}</p><div className="mt-7">{children}</div></div>; }
 function AdminField({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; type?: string }) { return <label className="block text-sm font-bold text-brand-900">{label}<input type={type} value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} className="mt-2 h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 font-normal outline-none focus:border-brand-700 focus:ring-4 focus:ring-amber-100" /></label>; }
+
+function UrlSubmissionSettings({ submissions, submitUrl }: { submissions: UrlSubmission[]; submitUrl: (url: string) => Promise<void> }) {
+  const [url, setUrl] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setError('');
+    setSuccess('');
+    try {
+      await submitUrl(url.trim());
+      setUrl('');
+      setSuccess('URL submitted to Bing successfully.');
+    } catch (submissionError) {
+      setError(submissionError instanceof Error ? submissionError.message : 'Unable to submit this URL.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]"><SettingsCard title="Submit a URL" description="Send a new or updated page to Bing through IndexNow. Only URLs on this website are accepted."><form onSubmit={handleSubmit} className="space-y-5"><AdminField label="Page URL" value={url} onChange={setUrl} type="url" placeholder="https://yourdomain.com/page" /><button type="submit" disabled={submitting || !url.trim()} className="inline-flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-3 text-sm font-bold text-brand-900 hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60"><Link2 className="h-4 w-4" />{submitting ? 'Submitting...' : 'Submit URL'}</button>{success && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{success}</p>}{error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}</form></SettingsCard><SettingsCard title="Recent submissions" description="The last 20 successful submissions saved in this browser.">{submissions.length ? <div className="space-y-3">{submissions.map((submission) => <div key={`${submission.url}-${submission.submittedAt}`} className="rounded-lg border border-slate-200 bg-slate-50 p-3"><p className="break-all text-sm font-semibold text-brand-900">{submission.url}</p><p className="mt-1 text-xs text-slate-500">{new Date(submission.submittedAt).toLocaleString()}</p></div>)}</div> : <p className="text-sm text-slate-500">No URLs submitted from this browser yet.</p>}</SettingsCard></div>;
+}
 
 function ImageSettings({ settings, updateImage, handleImageFile }: { settings: AdminSettings; updateImage: (field: keyof AdminSettings['images'], value: string) => void; handleImageFile: (field: keyof AdminSettings['images'], event: ChangeEvent<HTMLInputElement>) => void }) {
   const items: Array<[keyof AdminSettings['images'], string, string]> = [['hero', 'Homepage hero', 'Main homepage image'], ['about', 'About page image', 'Company overview image'], ['services', 'Services feature image', 'Services hero/feature image'], ['footer', 'Footer background', 'Shared footer cityscape']];

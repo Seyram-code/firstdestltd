@@ -32,7 +32,7 @@ export function HeroSection({
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.05fr]">
           <div className="premium-fade flex flex-col justify-center py-4 lg:py-8">
-            <p className="mb-4 text-sm font-extrabold uppercase tracking-[0.18em] text-brand-300">{eyebrow}</p>
+            <p className="mb-4 text-sm font-extrabold uppercase tracking-[0.18em] text-amber-300">{eyebrow}</p>
             <h1 className="max-w-2xl text-5xl font-extrabold leading-[0.96] tracking-[-0.06em] text-white md:text-7xl">{title}</h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-200">{description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
